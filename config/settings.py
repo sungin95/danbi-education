@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "routine",
+    "accounts",
     "rest_framework",
 ]
 
@@ -123,3 +124,18 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly",
+    )
+}
+# REST_FRAMEWORK = {
+#     "DEFAULT_AUTHENTICATION_CLASSES": [
+#         "rest_framework.authentication.BasicAuthentication",
+#         "rest_framework.authentication.SessionAuthentication",
+#     ]
+# }
+AUTH_USER_MODEL = "accounts.User"
