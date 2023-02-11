@@ -3,17 +3,21 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import User
 from .serializers import UserSerializer
 from rest_framework.parsers import JSONParser
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
 
 # account_list - 계정 전체 조회(GET), 회원가입(POST)
 # account - pk로 특정 계정 조회(GET), 수정(PUT), 삭제(DELETE)
 # login - 로그인(POST)
-@csrf_exempt
+
+
+@api_view(["GET", "POST"])
 def user_list(request):
     if request.method == "GET":
         query_set = User.objects.all()
         serializer = UserSerializer(query_set, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        return Response(serializer.data)
 
     elif request.method == "POST":
         data = JSONParser().parse(request)
