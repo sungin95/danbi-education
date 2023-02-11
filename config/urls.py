@@ -23,11 +23,5 @@ from rest_framework_simplejwt.views import (
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("routine/", include("routine.urls")),
-    path("accounts/", include("accounts.urls")),
-    # rest-auth
-    path("rest-auth/", include("rest_auth.urls")),
-    path("rest-auth/signup/", include("rest_auth.registration.urls")),
-    # JWT관련
-    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("api/accounts/v1/", include("accounts.urls")),
 ]

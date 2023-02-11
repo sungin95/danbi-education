@@ -1,9 +1,21 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db import models
+from django.utils.translation import gettext_lazy as _
+
+from .managers import UserManager
+
 from routine.models import Quiz
 
 
 class User(AbstractUser):
-    # age = models.PositiveIntegerField()
-    learning_subject = models.ManyToManyField(Quiz, related_name="learning_user")
-    email = models.EmailField(unique=True)
+    # 설정값을 바꾸어 주지 않으면 None할때 오류가 걸리는거 같다.
+    username = None
+    email = models.EmailField(_("email address"), unique=True)
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
+
+    objects = UserManager()
+
+    def __str__(self):
+        return self.email

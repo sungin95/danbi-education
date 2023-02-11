@@ -3,8 +3,6 @@ from . import views
 from django.conf.urls import include
 
 urlpatterns = [
-    path("accounts", views.user_list),
-    path("accounts/<int:pk>", views.user),
-    path("login", views.login),
-    path("auth", include("rest_framework.urls", namespace="rest_framework")),
+    path("", include("dj_rest_auth.urls")),  # 해당 라인 추가
+    path("registration/", include("dj_rest_auth.registration.urls")),
 ]
