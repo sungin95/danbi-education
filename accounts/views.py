@@ -1,6 +1,3 @@
-# 라이브러리로 대체
-
-
 # from django.http import HttpResponse, JsonResponse
 # from django.views.decorators.csrf import csrf_exempt
 # from .models import User

@@ -1,0 +1,1 @@
+api_view 사용하면 request.user 를 불러올때 어나미어스 유저로 뜬다. 

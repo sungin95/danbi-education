@@ -1,7 +1,7 @@
 from django.urls import path, include
-from .views import helloAPI, randomQuiz
+from . import views
 
 urlpatterns = [
-    path("hello/", helloAPI),
-    path("<int:id>/", randomQuiz),
+    path("create/", views.createRoutine),
+    path("test/", views.test),
 ]

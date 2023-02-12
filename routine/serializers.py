@@ -1,8 +1,14 @@
 from rest_framework import serializers
-from .models import Quiz
+from .models import Routine, RoutineDay
 
 
-class QuizSerializer(serializers.ModelSerializer):
+class RoutineSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Quiz
-        fields = ("title", "body", "answer")
+        model = Routine
+        fields = ("title", "category", "goal", "is_alarm", "pk")
+
+
+class RoutineDaySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RoutineDay
+        fields = ("pk",)
