@@ -8,13 +8,12 @@ from .serializers import (
     RoutineResultSerializer,
 )
 from rest_framework.parsers import JSONParser
-
-from rest_framework.fields import CurrentUserDefault
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse
+from datetime import datetime, timedelta
+
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
-from datetime import datetime, timedelta
 
 
 # @api_view(["POST"])
@@ -100,7 +99,6 @@ def today_todos(request):
                 },
             }
         )
-    return Routine
 
 
 @csrf_exempt
@@ -182,27 +180,3 @@ def restore(request, pk):
         if obj.account_id == request.user:
             obj.restore()
         return HttpResponse(status=204)
-
-
-# @csrf_exempt
-# def modify(request, pk):
-#     # 수정
-#     obj = get_object_or_404(Routine, pk=pk)
-#     if obj.account_id == request.user:
-#         if request.method == "POST":
-#             data = JSONParser().parse(request)
-#             if str(data["days"]) == obj.days:
-#                 # 수정은 따로 만들어야 하나? 확인 필요
-#                 serializer = RoutineSerializer(obj, data=data)
-#                 if serializer.is_valid():
-#                     serializer.save()
-#                     return JsonResponse(
-#                         {
-#                             "data": {"routine_id": serializer.data["routine_id"]},
-#                             "message": {
-#                                 "msg": "The routine has been modified.",
-#                                 "status": "ROUTINE_UPDATE_OK",
-#                             },
-#                         },
-#                         status=201,
-#                     )
