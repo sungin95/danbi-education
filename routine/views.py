@@ -10,7 +10,7 @@ from django.http import HttpResponse, JsonResponse
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 from datetime import datetime, timedelta
-from django.db.models.query import QuerySet, RawQuerySet
+
 
 # @api_view(["POST"])
 week_day = {
@@ -40,7 +40,7 @@ def createRoutine(request):
             today = datetime.today().weekday() + 1
             now = datetime.now()
             week = now + timedelta(weeks=0, days=-(today % 7))
-            routine = Routine.objects.get(pk=serializer["pk"].value)
+            routine = Routine.objects.get(routine_id=serializer["routine_id"].value)
             for d in data["days"]:
                 temp = week + timedelta(days=week_day[d])
                 temp_time = temp.strftime("%Y-%m-%d")
@@ -50,7 +50,7 @@ def createRoutine(request):
                     serializer2.validated_data["day"] = temp_time
                     serializer2.validated_data["routine_id"] = routine
                     serializer2.save()
-            return JsonResponse({"data": serializer.data["pk"]}, status=201)
+            return JsonResponse({"data": serializer.data["routine_id"]}, status=201)
     return JsonResponse(serializer.errors, status=400)
 
 
@@ -61,7 +61,6 @@ def today_todos(request):
         data = JSONParser().parse(request)
         today = data["today"]
         account_id = data["account_id"]
-        print(today, account_id)
         query_set_day = RoutineDay.objects.filter(day=today)
         # 필요한 형태에 맞게 데이터 가공
         query_list = []

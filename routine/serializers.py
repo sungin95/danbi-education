@@ -5,7 +5,7 @@ from .models import Routine, RoutineDay
 class RoutineSerializer(serializers.ModelSerializer):
     class Meta:
         model = Routine
-        fields = ("title", "category", "goal", "is_alarm", "pk")
+        fields = ("title", "category", "goal", "is_alarm", "routine_id")
 
 
 class RoutineDaySerializer(serializers.ModelSerializer):
