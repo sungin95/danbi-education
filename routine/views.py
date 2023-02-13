@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .models import Routine, RoutineDay, RoutineResult
@@ -102,14 +103,106 @@ def today_todos(request):
     return Routine
 
 
-def test(request):
-    print(request.user)
-    return
+@csrf_exempt
+def modify(request, pk):
+    # 수정
+    obj = get_object_or_404(Routine, pk=pk)
+    if obj.account_id == request.user:
+        if request.method == "POST":
+            data = JSONParser().parse(request)
+            if str(data["days"]) == obj.days:
+                # 수정은 따로 만들어야 하나? 확인 필요
+                serializer = RoutineSerializer(obj, data=data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return JsonResponse(
+                        {
+                            "data": {"routine_id": serializer.data["routine_id"]},
+                            "message": {
+                                "msg": "The routine has been modified.",
+                                "status": "ROUTINE_UPDATE_OK",
+                            },
+                        },
+                        status=201,
+                    )
+            else:
+                # days가 바뀌면 삭제하고 다시 만든다.
+                obj.delete()
+                serializer = RoutineSerializer(data=data)
+                if serializer.is_valid():
+                    serializer.validated_data["account_id"] = request.user
+                    serializer.validated_data["days"] = str(data["days"])
+                    serializer.save()
+                    # create RoutineDay.
+                    today = datetime.today().weekday() + 1
+                    now = datetime.now()
+                    week = now + timedelta(weeks=0, days=-(today % 7))
+                    routine = Routine.objects.get(
+                        routine_id=serializer["routine_id"].value
+                    )
+                    for d in data["days"]:
+                        temp = week + timedelta(days=week_day[d])
+                        temp_time = temp.strftime("%Y-%m-%d")
+                        serializer2 = RoutineDaySerializer(data=data)
+                        if serializer2.is_valid():
+                            serializer2.validated_data["day"] = temp_time
+                            serializer2.validated_data["routine_id"] = routine
+                            serializer2.save()
+                        serializer3 = RoutineResultSerializer(data=data)
+                        if serializer3.is_valid():
+                            serializer3.validated_data["day"] = temp_time
+                            serializer3.validated_data["routine_id"] = routine
+                            serializer3.save()
+                    return JsonResponse(
+                        {
+                            "data": {"routine_id": serializer.data["routine_id"]},
+                            "message": {
+                                "msg": "The routine has been modified.",
+                                "status": "ROUTINE_UPDATE_OK",
+                            },
+                        },
+                        status=201,
+                    )
+        return JsonResponse(serializer.errors, status=400)
 
 
-# @api_view(["GET"])
-# def randomQuiz(reuest, id):
-#     totalQuizs = Quiz.objects.all()
-#     randomQuizs = random.sample(list(totalQuizs), id)
-#     serializer = QuizSerializer(randomQuizs, many=True)
-#     return Response(serializer.data)
+@csrf_exempt
+def delete(request, pk):
+    obj = get_object_or_404(Routine, pk=pk)
+    if request.method == "DELETE":
+        if obj.account_id == request.user:
+            obj.soft_delete()
+        return HttpResponse(status=204)
+
+
+@csrf_exempt
+def restore(request, pk):
+    obj = Routine.all_objects.get(pk=pk)
+    if request.method == "POST":
+        if obj.account_id == request.user:
+            obj.restore()
+        return HttpResponse(status=204)
+
+
+# @csrf_exempt
+# def modify(request, pk):
+#     # 수정
+#     obj = get_object_or_404(Routine, pk=pk)
+#     if obj.account_id == request.user:
+#         if request.method == "POST":
+#             data = JSONParser().parse(request)
+#             if str(data["days"]) == obj.days:
+#                 # 수정은 따로 만들어야 하나? 확인 필요
+#                 serializer = RoutineSerializer(obj, data=data)
+#                 if serializer.is_valid():
+#                     serializer.save()
+#                     return JsonResponse(
+#                         {
+#                             "data": {"routine_id": serializer.data["routine_id"]},
+#                             "message": {
+#                                 "msg": "The routine has been modified.",
+#                                 "status": "ROUTINE_UPDATE_OK",
+#                             },
+#                         },
+#                         status=201,
+#                     )
