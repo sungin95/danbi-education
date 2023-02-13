@@ -79,20 +79,17 @@ def today_todos(request):
         today = data["today"]
         account_id = data["account_id"]
 
-        query_set_day = RoutineDay.objects.filter(day=today)
-        # 필요한 형태에 맞게 데이터 가공
+        query_set = Routine.objects.filter(account_id=account_id)
         query_list = []
-        for query in query_set_day:
-            if query.routine_id.account_id.pk == account_id:
-                # day와 result는 pk가 같다.
-                routineResult = RoutineResult.objects.get(pk=(query.pk))
-                dict_ = {}
-                dict_["goal"] = query.routine_id.goal
-                dict_["id"] = query.routine_id.routine_id
-                dict_["result"] = routineResult.result
-                dict_["title"] = query.routine_id.title
-                query_list.append(dict_)
-
+        for query in query_set:
+            for d in query.routineresult_set.all():
+                if str(d.day) == today:
+                    dict_ = {}
+                    dict_["goal"] = query.goal
+                    dict_["id"] = account_id
+                    dict_["result"] = d.result
+                    dict_["title"] = query.title
+                    query_list.append(dict_)
         return Response(
             {
                 "data": query_list,
