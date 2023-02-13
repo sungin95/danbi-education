@@ -78,15 +78,18 @@ def today_todos(request):
         data = JSONParser().parse(request)
         today = data["today"]
         account_id = data["account_id"]
+
         query_set_day = RoutineDay.objects.filter(day=today)
         # 필요한 형태에 맞게 데이터 가공
         query_list = []
         for query in query_set_day:
             if query.routine_id.account_id.pk == account_id:
+                # day와 result는 pk가 같다.
+                routineResult = RoutineResult.objects.get(pk=(query.pk))
                 dict_ = {}
                 dict_["goal"] = query.routine_id.goal
                 dict_["id"] = query.routine_id.routine_id
-                # dict_["goal"] = query.routine_id.goal
+                dict_["result"] = routineResult.result
                 dict_["title"] = query.routine_id.title
                 query_list.append(dict_)
 
