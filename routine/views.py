@@ -1,7 +1,11 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .models import Routine, RoutineDay, RoutineResult
-from .serializers import RoutineSerializer, RoutineDaySerializer
+from .serializers import (
+    RoutineSerializer,
+    RoutineDaySerializer,
+    RoutineResultSerializer,
+)
 from rest_framework.parsers import JSONParser
 
 from rest_framework.fields import CurrentUserDefault
@@ -44,13 +48,26 @@ def createRoutine(request):
             for d in data["days"]:
                 temp = week + timedelta(days=week_day[d])
                 temp_time = temp.strftime("%Y-%m-%d")
-
                 serializer2 = RoutineDaySerializer(data=data)
                 if serializer2.is_valid():
                     serializer2.validated_data["day"] = temp_time
                     serializer2.validated_data["routine_id"] = routine
                     serializer2.save()
-            return JsonResponse({"data": serializer.data["routine_id"]}, status=201)
+                serializer3 = RoutineResultSerializer(data=data)
+                if serializer3.is_valid():
+                    serializer3.validated_data["day"] = temp_time
+                    serializer3.validated_data["routine_id"] = routine
+                    serializer3.save()
+            return JsonResponse(
+                {
+                    "data": {"routine_id": serializer.data["routine_id"]},
+                    "message": {
+                        "msg": "You have successfully created the routine.",
+                        "status": "ROUTINE_CREATE_OK",
+                    },
+                },
+                status=201,
+            )
     return JsonResponse(serializer.errors, status=400)
 
 
