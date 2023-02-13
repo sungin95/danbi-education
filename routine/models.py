@@ -8,6 +8,7 @@ category_CHOICES = (
 
 
 class Routine(models.Model):
+    # routine_id = models.AutoField(primary_key=True)
     account_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=150)
     category = models.CharField(max_length=50, choices=category_CHOICES)
@@ -30,6 +31,7 @@ result_CHOICES = (
 
 
 class RoutineResult(models.Model):
+    # routine_result_id = models.AutoField(primary_key=True)
     # 일정 끝난 다음날 체크
     day = models.DateField()
     routine_id = models.ForeignKey("Routine", on_delete=models.CASCADE)
