@@ -4,12 +4,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .serializers import RegistrationSerializer
+from .renderers import UserJSONRenderer
 
 
 # Create your views here.
 class RegistrationAPIView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = RegistrationSerializer
+    renderer_classes = (UserJSONRenderer,)
 
     def post(self, request):
         user = request.data
