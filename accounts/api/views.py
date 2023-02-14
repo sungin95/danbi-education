@@ -3,7 +3,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import RegistrationSerializer
+from .serializers import RegistrationSerializer, LoginSerializer
 from .renderers import UserJSONRenderer
 
 
@@ -23,65 +23,25 @@ class RegistrationAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-# from django.http import HttpResponse, JsonResponse
-# from django.views.decorators.csrf import csrf_exempt
-# from .models import User
-# from .serializers import UserSerializer
-# from rest_framework.parsers import JSONParser
-# from rest_framework.response import Response
-# from rest_framework.decorators import api_view
+class LoginAPIView(APIView):
+    permission_classes = (AllowAny,)
+    renderer_classes = (UserJSONRenderer,)
+    serializer_class = LoginSerializer
+
+    # 1.
+    def post(self, request):
+        # 2.
+        user = request.data
+
+        # 3.
+        serializer = self.serializer_class(data=user)
+        serializer.is_valid(raise_exception=True)
+
+        # 4.
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-# # account_list - 계정 전체 조회(GET), 회원가입(POST)
-# # account - pk로 특정 계정 조회(GET), 수정(PUT), 삭제(DELETE)
-# # login - 로그인(POST)
-
-
-# @api_view(["GET", "POST"])
-# def user_list(request):
-#     if request.method == "GET":
-#         query_set = User.objects.all()
-#         serializer = UserSerializer(query_set, many=True)
-#         return Response(serializer.data)
-
-#     elif request.method == "POST":
-#         data = JSONParser().parse(request)
-#         serializer = UserSerializer(data=data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return JsonResponse(serializer.data, status=201)
-#         return JsonResponse(serializer.errors, status=400)
-
-
-# @csrf_exempt
-# def user(request, pk):
-#     obj = User.objects.get(pk=pk)
-
-#     if request.method == "GET":
-#         serializer = UserSerializer(obj)
-#         return JsonResponse(serializer.data, safe=False)
-
-#     elif request.method == "PUT":
-#         data = JSONParser().parse(request)
-#         serializer = UserSerializer(obj, data=data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return JsonResponse(serializer.data, status=201)
-#         return JsonResponse(serializer.errors, status=400)
-
-#     elif request.method == "DELETE":
-#         obj.delete()
-#         return HttpResponse(status=204)
-
-
-# @csrf_exempt
-# def login(request):
-#     if request.method == "POST":
-#         data = JSONParser().parse(request)
-#         search_email = data["email"]
-#         obj = User.objects.get(email=search_email)
-
-#         if data["password"] == obj.password:
-#             return HttpResponse(status=200)
-#         else:
-#             return HttpResponse(status=400)
+# 1. def post는 자동으로 실행되는 건가?
+# 2. 받은 정보를 user로 넣어 준다.
+# 3. 아까 만든 LoginSerializer로 보내 검증을 한다.
+# 4. 검증 성공하면 정보 반환
