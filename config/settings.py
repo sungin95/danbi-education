@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "routine",
     "accounts",
     # 설치한 라이브러리들
+    "django_extensions",
     "rest_framework",
     "rest_framework.authtoken",
     "dj_rest_auth",

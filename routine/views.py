@@ -48,16 +48,18 @@ def createRoutine(request):
             for d in data["days"]:
                 temp = week + timedelta(days=week_day[d])
                 temp_time = temp.strftime("%Y-%m-%d")
-                serializer2 = RoutineDaySerializer(data=data)
-                if serializer2.is_valid():
-                    serializer2.validated_data["day"] = temp_time
-                    serializer2.validated_data["routine_id"] = routine
-                    serializer2.save()
-                serializer3 = RoutineResultSerializer(data=data)
-                if serializer3.is_valid():
-                    serializer3.validated_data["day"] = temp_time
-                    serializer3.validated_data["routine_id"] = routine
-                    serializer3.save()
+                # day
+                serializer_day = RoutineDaySerializer(data=data)
+                if serializer_day.is_valid():
+                    serializer_day.validated_data["day"] = temp_time
+                    serializer_day.validated_data["routine_id"] = routine
+                    serializer_day.save()
+                # result
+                serializer_result = RoutineResultSerializer(data=data)
+                if serializer_result.is_valid():
+                    serializer_result.validated_data["day"] = temp_time
+                    serializer_result.validated_data["routine_id"] = routine
+                    serializer_result.save()
             return JsonResponse(
                 {
                     "data": {"routine_id": serializer.data["routine_id"]},
@@ -109,7 +111,6 @@ def modify(request, pk):
         if request.method == "POST":
             data = JSONParser().parse(request)
             if str(data["days"]) == obj.days:
-                # 수정은 따로 만들어야 하나? 확인 필요
                 serializer = RoutineSerializer(obj, data=data)
                 if serializer.is_valid():
                     serializer.save()
@@ -141,16 +142,16 @@ def modify(request, pk):
                     for d in data["days"]:
                         temp = week + timedelta(days=week_day[d])
                         temp_time = temp.strftime("%Y-%m-%d")
-                        serializer2 = RoutineDaySerializer(data=data)
-                        if serializer2.is_valid():
-                            serializer2.validated_data["day"] = temp_time
-                            serializer2.validated_data["routine_id"] = routine
-                            serializer2.save()
-                        serializer3 = RoutineResultSerializer(data=data)
-                        if serializer3.is_valid():
-                            serializer3.validated_data["day"] = temp_time
-                            serializer3.validated_data["routine_id"] = routine
-                            serializer3.save()
+                        serializer_day = RoutineDaySerializer(data=data)
+                        if serializer_day.is_valid():
+                            serializer_day.validated_data["day"] = temp_time
+                            serializer_day.validated_data["routine_id"] = routine
+                            serializer_day.save()
+                        serializer_result = RoutineResultSerializer(data=data)
+                        if serializer_result.is_valid():
+                            serializer_result.validated_data["day"] = temp_time
+                            serializer_result.validated_data["routine_id"] = routine
+                            serializer_result.save()
                     return JsonResponse(
                         {
                             "data": {"routine_id": serializer.data["routine_id"]},

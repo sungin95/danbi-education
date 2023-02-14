@@ -1,19 +1,48 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.db.models.fields import BooleanField
 
 from .managers import UserManager
+from core.models import TimestampedModel
+
+import jwt
+from datetime import datetime, timedelta
+from django.conf import settings
 
 
-class User(AbstractUser):
-    # 설정값을 바꾸어 주지 않으면 None할때 오류가 걸리는거 같다.
-    username = None
-    email = models.EmailField(_("email address"), unique=True)
+class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
+    username = models.CharField(max_length=255, unique=True)
+    email = models.EmailField(db_index=True, unique=True)
+    phone_number = models.CharField(max_length=255)
+    is_active = BooleanField(default=True)
+    is_staff = BooleanField(default=False)
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
+
+    REQUIRED_FIELDS = ["username", "phone_number"]
 
     objects = UserManager()
 
     def __str__(self):
         return self.email
+
+    def get_full_name(self):
+        return self.username
+
+    def get_short_name(self):
+        return self.username
+
+    # JWT 토큰 발행
+    @property
+    def token(self):
+        return self._generate_jwt_token()
+
+    def _generate_jwt_token(self):
+        dt = datetime.now() + timedelta(days=60)
+
+        token = jwt.encode(
+            {"id": self.pk, "exp": dt.utcfromtimestamp(dt.timestamp())},
+            settings.SECRET_KEY,
+            algorithm="HS256",
+        )
+        return token
