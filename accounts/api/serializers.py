@@ -68,3 +68,47 @@ class LoginSerializer(serializers.Serializer):
 # 5. None이면 돌려 보냄
 # 6. 통과 되었고 마지막 로그인 시간 최신화
 # 7. 값 리턴
+
+
+# 1.
+class UserSerializer(serializers.ModelSerializer):
+    # 2.
+    password = serializers.CharField(max_length=128, min_length=8, write_only=True)
+
+    class Meta:
+        model = User
+        fields = ["email", "username", "password", "token"]
+
+        # 3.
+        read_only_fields = ("token",)
+
+    # 4.
+    def update(self, instance, validated_data):
+        # 5.
+        password = validated_data.pop("password", None)
+
+        # 6.
+        for key, value in validated_data.items():
+            # 7.
+            setattr(instance, key, value)
+
+        if password is not None:
+            # 8.
+            instance.set_password(password)
+
+        # 9.
+        instance.save()
+
+        return instance
+
+
+# 1.?
+# 2.
+# 3. 앞에 케이스는 max_length같은 옵션을 설정해 줘야 했지만 토큰은 road_only 옵션 한개면 되므로, ;read_only_fields'만 주었다.
+# 4. update할때 사용
+# 5. setattr는 setattr(객체(인스턴스), 속성명(필드 이름), 속성값) 구조로 하면 해당 속성명의 속성값을 바꾸어 주는 함수이다.
+# 비밀번호는 setatter같은 함수는 사용 못하고 따로 정해진 함수를 사용해야 한다.(set_password)
+# 6.
+# 7. setattr를 활용하여 값을 바꾸어 준다.
+# 8. set_password 메서드를 활용하여 password를 변경해 준다.
+# 9. 저장
