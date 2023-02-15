@@ -131,7 +131,7 @@ class RoutineDetailAPIView(APIView):
             data = JSONParser().parse(request)
             # days가 같으면 값만 수정
             if str(data["days"]) == routine.days:
-                serializer = RoutineSerializer(routine, data=data)
+                serializer = self.serializer_class(data=data)
                 if serializer.is_valid():
                     serializer.save()
                     return Response(
@@ -148,7 +148,7 @@ class RoutineDetailAPIView(APIView):
             # days가 달라지면 삭제하고 다시 만듬
             else:
                 routine.delete()
-                serializer = RoutineSerializer(data=data)
+                serializer = self.serializer_class(data=data)
                 if serializer.is_valid():
                     create_routine_day_result(serializer, data, request)
                     return Response(
