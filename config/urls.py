@@ -19,6 +19,7 @@ from django.contrib import admin
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("users/", include("accounts.api.urls"), name="accounts"),
+    path("routine/", include("routine.api.urls"), name="routine"),
 ]
 # from rest_framework_simplejwt.views import (
 #     TokenObtainPairView,
@@ -27,6 +28,5 @@ urlpatterns = [
 
 # urlpatterns = [
 #     path("admin/", admin.site.urls),
-#     path("routine/", include("routine.urls")),
 #     path("api/accounts/v1/", include("accounts.urls")),
 # ]

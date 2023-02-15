@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Routine, RoutineDay, RoutineResult
+from routine.models import Routine, RoutineDay, RoutineResult
 
 
 class RoutineSerializer(serializers.ModelSerializer):
