@@ -1,1 +1,0 @@
-[소프트 딜리트 참고 블로그](https://dev.to/bikramjeetsingh/soft-deletes-in-django-a9j)
