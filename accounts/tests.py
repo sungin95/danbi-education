@@ -19,7 +19,6 @@ class signupTestCase(TestCase):
         )
         self.assertEqual(response.status_code, 201)
 
-    # 비밀 번호를 틀리게 함 400
     def test_signup_with_wrong_password(self):
         response = self.client.post(
             "/accounts/register",
@@ -27,30 +26,28 @@ class signupTestCase(TestCase):
                 "phone_number": "000-0000-0000",
                 "username": "signup",
                 "email": "signup@test.com",
-                "password": "1234",
+                "password": "1234",  # 비밀 번호를 틀리게 함 400
             },
         )
         self.assertEqual(response.status_code, 400)
 
-    # 이메일 형식를 틀리게 함 400
     def test_signup_with_wrong_email(self):
         response = self.client.post(
             "/accounts/register",
             {
                 "phone_number": "000-0000-0000",
                 "username": "signup",
-                "email": "signup",
+                "email": "signup",  # 이메일 형식를 틀리게 함 400
                 "password": "1234",
             },
         )
         self.assertEqual(response.status_code, 400)
 
-    # 하나를 빼 먹음 400
     def test_signup_with_wrong(self):
         response = self.client.post(
             "/accounts/register",
             {
-                # "phone_number": "000-0000-0000",
+                # "phone_number": "000-0000-0000", # 하나를 빼 먹음 400
                 "username": "signup",
                 "email": "signup",
                 "password": "1234",

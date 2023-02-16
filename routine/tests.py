@@ -142,7 +142,6 @@ class TodayRoutineTestCase(TestCase):
             },
             **headers,
         )
-        # views 167번째 줄 식이 작동한다.
         self.assertEqual(response.status_code, 201)
 
     # 로그인 안한 유저가 루틴 수정하려고 할때
@@ -170,7 +169,7 @@ class TodayRoutineTestCase(TestCase):
             f"/routine/routine_detail/{self.routine.routine_id}/",
             **headers,
         )
-        # views 193줄에서 routine.is_deleted를 프린트하면 True가 나온다.
+        # views 188줄에서 routine.is_deleted를 프린트하면 True가 나온다.
         self.assertEqual(response.status_code, 200)
 
     # routine 복구(소프트 딜리트)
@@ -183,5 +182,5 @@ class TodayRoutineTestCase(TestCase):
             f"/routine/routine_detail/{self.routine.routine_id}/",
             **headers,
         )
-        # views 216줄에서 routine.is_deleted를 프린트하면 False로 나온다.
+        # views 211줄에서 routine.is_deleted를 프린트하면 False로 나온다.
         self.assertEqual(response.status_code, 200)

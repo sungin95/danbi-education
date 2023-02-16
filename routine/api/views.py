@@ -134,9 +134,8 @@ class RoutineDetailAPIView(APIView):
         routine = self.get_routine(pk)
         # 본인만 루틴 수정 가능
         if routine.account_id == request.user:
-            # data = JSONParser().parse(request)
             data = request.data
-            # days가 같으면 값만 수정
+            # days가 같으면
             if str(data["days"]) == routine.days:
                 serializer = self.serializer_update_class(
                     routine, data=data, partial=True
@@ -163,6 +162,7 @@ class RoutineDetailAPIView(APIView):
                 routine.delete()
                 serializer = self.serializer_class(data=data)
                 if serializer.is_valid():
+                    # create Routine
                     create_routine_day_result(serializer, data, request)
                     return Response(
                         {
