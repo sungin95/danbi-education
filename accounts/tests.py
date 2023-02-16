@@ -1,9 +1,7 @@
 from django.test import TestCase, Client
 from .models import User
-import jwt
 from rest_framework.test import APIClient
-from django.conf import settings
-from rest_framework.test import force_authenticate
+from rest_framework.test import APIClient
 
 
 # 회원 가입
@@ -101,9 +99,7 @@ class AnonymousUserPATCHTestCase(TestCase):
         self.assertEqual(response.status_code, 403)
 
 
-from rest_framework.test import APIClient
-
-
+# 로그인 한 유저가 정보 바꿀려고 하면 성공 201
 class LoginUserPATCHTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
@@ -117,40 +113,16 @@ class LoginUserPATCHTestCase(TestCase):
             phone_number=self.phone_number,
             password=self.password,
         )
-        Token_ = (f"Token {self.user.token}".split("'"))[1]
-        self.client.credentials(Authorization="token " + Token_)
 
-    # 토큰 header에 까지 해 줬는데 왜 인증을 못하지?
+    # 201확인, 값을 확인은 모르겠다...
     def test_login_PATCH_username(self):
         Token_ = (f"Token {self.user.token}".split("'"))[1]
         headers = {
             "HTTP_AUTHORIZATION": "token " + Token_,
         }
-
         response = self.client.patch(
             "/accounts/current",
             {"username": "update Username223"},
             **headers,
         )
-
         self.assertEqual(response.status_code, 201)
-
-
-# import jwt
-# from rest_framework.test import APIClient
-# from django.contrib.auth.models import User
-# from django.conf import settings
-# from django.urls import reverse
-
-
-# class MyJWTTestCase(TestCase):
-#     def setUp(self):
-#         self.user = User.objects.create_user(username="testuser", password="testpass")
-#         payload = {"user_id": self.user.id, "username": self.user.username}
-#         self.token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
-#         self.client = APIClient()
-#         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.token}")
-
-#     def test_my_jwt_view(self):
-#         response = self.client.get(reverse("my_jwt_view"))
-#         self.assertEqual(response.status_code, 200)
