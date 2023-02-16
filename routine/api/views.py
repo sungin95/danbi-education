@@ -190,6 +190,7 @@ class RoutineDetailAPIView(APIView):
         routine = self.get_routine(pk)
         if routine.account_id == request.user:
             routine.soft_delete()
+            # print(routine.is_deleted)
             return Response(
                 {
                     "data": {"routine_id": routine.routine_id},
@@ -212,6 +213,7 @@ class RoutineDetailAPIView(APIView):
         routine = Routine.all_objects.get(pk=pk)
         if routine.account_id == request.user:
             routine.restore()
+            # print(routine.is_deleted)
             return Response(
                 {
                     "data": {"routine_id": routine.routine_id},

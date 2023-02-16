@@ -159,3 +159,29 @@ class TodayRoutineTestCase(TestCase):
             },
         )
         self.assertEqual(response.status_code, 403)
+
+    # routine 삭제(소프트 딜리트)
+    def test_routine_DELETE(self):
+        Token_ = (f"Token {self.user.token}".split("'"))[1]
+        headers = {
+            "HTTP_AUTHORIZATION": "token " + Token_,
+        }
+        response = self.client.delete(
+            f"/routine/routine_detail/{self.routine.routine_id}/",
+            **headers,
+        )
+        # views 193줄에서 routine.is_deleted를 프린트하면 True가 나온다.
+        self.assertEqual(response.status_code, 200)
+
+    # routine 복구(소프트 딜리트)
+    def test_routine_DELETE(self):
+        Token_ = (f"Token {self.user.token}".split("'"))[1]
+        headers = {
+            "HTTP_AUTHORIZATION": "token " + Token_,
+        }
+        response = self.client.patch(
+            f"/routine/routine_detail/{self.routine.routine_id}/",
+            **headers,
+        )
+        # views 216줄에서 routine.is_deleted를 프린트하면 False로 나온다.
+        self.assertEqual(response.status_code, 200)
