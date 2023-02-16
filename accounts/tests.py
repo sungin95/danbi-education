@@ -107,34 +107,32 @@ from rest_framework.test import APIClient
 class LoginUserPATCHTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.username = "testuser"
-        self.email = "TESTL@test.com"
+        self.username = "testuser222"
+        self.email = "TESTL222@test.com"
         self.password = "test@pass1265"
         self.phone_number = "000-0000-0000"
         self.user = User.objects.create_user(
             username=self.username,
             email=self.email,
-            password=self.password,
             phone_number=self.phone_number,
+            password=self.password,
         )
-        # 이건 뭐 쓸모 없는거 같고....
-        self.client.login(email="TESTL@test.com", password="test@pass1265")
+        Token_ = (f"Token {self.user.token}".split("'"))[1]
+        self.client.credentials(Authorization="token " + Token_)
 
     # 토큰 header에 까지 해 줬는데 왜 인증을 못하지?
     def test_login_PATCH_username(self):
         Token_ = (f"Token {self.user.token}".split("'"))[1]
         headers = {
-            "Authorization": "Token " + Token_,
+            "HTTP_AUTHORIZATION": "token " + Token_,
         }
-        print(
-            "Token " + Token_,
-        )
+
         response = self.client.patch(
             "/accounts/current",
             {"username": "update Username223"},
-            format="json",
-            headers=headers,
+            **headers,
         )
+
         self.assertEqual(response.status_code, 201)
 
 
