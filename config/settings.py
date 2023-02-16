@@ -40,33 +40,33 @@ INSTALLED_APPS = [
     # apps
     "routine",
     "accounts",
-    # 설치한 라이브러리들
-    "django_extensions",
+    # 추가 설치
     "rest_framework",
-    "rest_framework.authtoken",
-    "dj_rest_auth",
-    "django.contrib.sites",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    "dj_rest_auth.registration",
+    # "django_extensions",
+    # "rest_framework.authtoken",
+    # "dj_rest_auth",
+    # "django.contrib.sites",
+    # "allauth",
+    # "allauth.account",
+    # "allauth.socialaccount",
+    # "dj_rest_auth.registration",
     # "rest_auth.registration",
     # "rest_auth",
 ]
 # django sites app setting
-REST_USE_JWT = True
-JWT_AUTH_COOKIE = "my-app-auth"
-JWT_AUTH_REFRESH_COOKIE = "my-refresh-token"
+# REST_USE_JWT = True
+# JWT_AUTH_COOKIE = "my-app-auth"
+# JWT_AUTH_REFRESH_COOKIE = "my-refresh-token"
 
-SITE_ID = 1
-ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = "email"
-ACCOUNT_EMAIL_VERIFICATION = "none"
+# SITE_ID = 1
+# ACCOUNT_UNIQUE_EMAIL = True
+# ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+# ACCOUNT_USERNAME_REQUIRED = False
+# ACCOUNT_EMAIL_REQUIRED = True
+# ACCOUNT_AUTHENTICATION_METHOD = "email"
+# ACCOUNT_EMAIL_VERIFICATION = "none"
 # error해결
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -132,7 +132,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "ko-kr"
 
 TIME_ZONE = "Asia/Seoul"
 
@@ -155,10 +155,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "core.exceptions.core_exception_handler",
     "NON_FIELD_ERRORS_KEY": "error",
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "accounts.backends.JWTAuthentication",
-        "rest_framework.authentication.TokenAuthentication",
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("accounts.backends.JWTAuthentication",),
 }
 
 AUTH_USER_MODEL = "accounts.User"

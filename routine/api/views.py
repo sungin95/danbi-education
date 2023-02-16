@@ -7,8 +7,6 @@ from .serializers import (
 )
 from datetime import datetime, timedelta
 from django.http import Http404
-
-from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated  # 로그인한 사용자만
 from rest_framework.views import APIView
@@ -22,19 +20,20 @@ def create_routine_day_result(serializer, data, request):
     serializer.save()
     today = datetime.today().weekday() + 1
     now = datetime.now()
+    # 일요일부터 토요일까지 기준
     week = now + timedelta(weeks=0, days=-(today % 7))
     routine = Routine.objects.get(routine_id=serializer["routine_id"].value)
     # .split(" ")는 테스트 케이스 통과를 위해 붙였습니다. 평소에는 제거해야 합니다.
     for d in data["days"].split(" "):
         temp = week + timedelta(days=week_day[d])
         temp_time = temp.strftime("%Y-%m-%d")
-        # day
+        # create RoutineDay
         serializer_day = RoutineDaySerializer(data=data)
         if serializer_day.is_valid():
             serializer_day.validated_data["day"] = temp_time
             serializer_day.validated_data["routine_id"] = routine
             serializer_day.save()
-        # result
+        # create RoutineResult
         serializer_result = RoutineResultSerializer(data=data)
         if serializer_result.is_valid():
             serializer_result.validated_data["day"] = temp_time
@@ -60,8 +59,6 @@ class CreateRoutineAPIView(APIView):
 
     def post(self, request):
         data = request.data
-        # data = JSONParser().parse(request) # 이걸로는 테스트 케이스 통과를 못함
-
         serializer = self.serializer_class(data=data)
         # create Routine
         if serializer.is_valid():
@@ -88,7 +85,6 @@ class CreateRoutineAPIView(APIView):
         # account_id = data["account_id"]
 
         # testcase 할때 쓰는거
-        data = request.data
         # 오늘
         today = request.GET.get("today")
         # 철수
@@ -107,7 +103,6 @@ class CreateRoutineAPIView(APIView):
                     dict_["result"] = d.result
                     dict_["title"] = routine.title
                     routine_list.append(dict_)
-
         return Response(
             {
                 "data": routine_list,
