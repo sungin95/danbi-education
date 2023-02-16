@@ -3,6 +3,7 @@ from .serializers import (
     RoutineSerializer,
     RoutineDaySerializer,
     RoutineResultSerializer,
+    RoutineUpdateSerializer,
 )
 from datetime import datetime, timedelta
 from django.http import Http404
@@ -124,6 +125,7 @@ class CreateRoutineAPIView(APIView):
 class RoutineDetailAPIView(APIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = RoutineSerializer
+    serializer_update_class = RoutineUpdateSerializer
 
     def get_routine(self, pk):
         try:
@@ -137,12 +139,19 @@ class RoutineDetailAPIView(APIView):
         routine = self.get_routine(pk)
         # 본인만 루틴 수정 가능
         if routine.account_id == request.user:
-            data = JSONParser().parse(request)
+            # data = JSONParser().parse(request)
+            data = request.data
             # days가 같으면 값만 수정
             if str(data["days"]) == routine.days:
-                serializer = self.serializer_class(data=data)
+                serializer = self.serializer_update_class(
+                    routine, data=data, partial=True
+                )
                 if serializer.is_valid():
                     serializer.save()
+                    # print(routine.title)
+                    # print(routine.category)
+                    # print(routine.goal)
+                    # print(routine.is_alarm)
                     return Response(
                         {
                             "data": {"routine_id": serializer.data["routine_id"]},

@@ -125,4 +125,5 @@ class LoginUserPATCHTestCase(TestCase):
             {"username": "update Username223"},
             **headers,
         )
+        # print(response.content)
         self.assertEqual(response.status_code, 201)

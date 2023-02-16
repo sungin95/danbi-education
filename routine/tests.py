@@ -58,14 +58,14 @@ class TodayRoutineTestCase(TestCase):
             phone_number=self.phone_number,
             password=self.password,
         )
-        # 루틴
+        # 루틴 today 2023-02-15 수요일 기준
         self.routine = Routine.objects.create(
             account_id=self.user,
             title="problem solving",
             category="HOMEWORK",
             goal="Increase your problem-solving skills",
             is_alarm=True,
-            days='["MON", "WED", "FRI"]',
+            days="MON WED FRI",
         )
         self.routineResult1 = RoutineResult.objects.create(
             day="2023-02-13",
@@ -100,5 +100,62 @@ class TodayRoutineTestCase(TestCase):
         response = self.client.get(
             "/routine/routine/",
             {"account_id": self.user.pk, "today": "2023-02-15"},
+        )
+        self.assertEqual(response.status_code, 403)
+
+    # routine 수정
+    def test_routine_PUT_modify(self):
+        Token_ = (f"Token {self.user.token}".split("'"))[1]
+        headers = {
+            "HTTP_AUTHORIZATION": "token " + Token_,
+        }
+        response = self.client.put(
+            f"/routine/routine_detail/{self.routine.routine_id}/",
+            {
+                "routine_id": self.routine.routine_id,
+                "title": "problem solving!!!!!!",
+                "category": "기상",
+                "goal": "Increase your problem-solving skills!!!!!!",
+                "is_alarm": False,
+                "days": "MON WED FRI",
+            },
+            **headers,
+        )
+        # views 148번째에서 print해 보면 값이 바뀌어 있는 것을 볼 수 있다.
+        self.assertEqual(response.status_code, 201)
+
+    # routine 수정 days 수정
+    def test_routine_PUT_modify_d(self):
+        Token_ = (f"Token {self.user.token}".split("'"))[1]
+        headers = {
+            "HTTP_AUTHORIZATION": "token " + Token_,
+        }
+        response = self.client.put(
+            f"/routine/routine_detail/{self.routine.routine_id}/",
+            {
+                "routine_id": self.routine.routine_id,
+                "title": "problem solving!!!!!!",
+                "category": "기상",
+                "goal": "Increase your problem-solving skills!!!!!!",
+                "is_alarm": False,
+                "days": "MON WED",
+            },
+            **headers,
+        )
+        # views 167번째 줄 식이 작동한다.
+        self.assertEqual(response.status_code, 201)
+
+    # 로그인 안한 유저가 루틴 수정하려고 할때
+    def test_routine_PUT_modify_d(self):
+        response = self.client.put(
+            f"/routine/routine_detail/{self.routine.routine_id}/",
+            {
+                "routine_id": self.routine.routine_id,
+                "title": "problem solving!!!!!!",
+                "category": "기상",
+                "goal": "Increase your problem-solving skills!!!!!!",
+                "is_alarm": False,
+                "days": "MON WED",
+            },
         )
         self.assertEqual(response.status_code, 403)
